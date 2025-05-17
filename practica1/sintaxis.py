@@ -1,6 +1,7 @@
 
+# Comentarios en Python
 # comentarios de una sola linea 
 
-"""
-comentarios de varias lineas
-"""
+#2. strings
+print("hola mundo soy una cadena")
+print('yo soy otra')
