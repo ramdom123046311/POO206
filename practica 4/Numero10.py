@@ -10,7 +10,7 @@ def obtener_numero():
             print(" Error: Debes introducir un número entero válido.")
 
 def mostrar_impares_hasta(n):
-    impares = [str(i) for i in range(3, n + 1, 2)]  # empezamos en 3 porque 2 no es impar
+    impares = [str(i) for i in range(3, n + 1, 2)]  # empezamos en 3 basicamente porque 2 no es impar
     print("Números impares desde 2 hasta", n, ":")
     print(", ".join(impares))
 
