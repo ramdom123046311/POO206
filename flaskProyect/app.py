@@ -1,5 +1,5 @@
 
-from flask import Flask,jsonify
+from flask import Flask,jsonify,render_template
 from flask_mysqldb import MySQL
 import MySQLdb
 
@@ -22,31 +22,24 @@ def DB_check():
      except MySQLdb.MySQLError as e:return jsonify( {'status':'error','message':str(e)} ),500
        
 
-#ruta simple
+#ruta de inicio
 @app.route('/')
 def home():
-     return 'hola mundo flask'   
+     return render_template('formulario.html') 
 
-#ruta con parametros
-@app.route('/saludo/<nombre>')
-def saludar(nombre):
-     return 'hola,'+nombre+'!!!'
+
+#ruta de consulta
+@app.route('/consulta')
+def consulta():
+     return render_template('consulta.html')
 
 #ruta try-catch
 @app.errorhandler(404)
 def paginaNoE(e):
      return 'Cuidado error de capa 8 !!!',404
 
-#ruta doble
-@app.route('/usuario')
-@app.route('/usuaria')
-def dobleroute():
-     return 'Soy el mismo recurso del servidor'
 
-#ruta con parametros
-@app.route('/formulario',methods=['POST'])
-def formulario():
-     return 'soy un formulario'
 
 if __name__ == '__main__':
     app.run(port=5000,debug=True)
+    
