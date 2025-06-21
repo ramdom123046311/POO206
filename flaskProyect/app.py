@@ -1,5 +1,5 @@
 
-from flask import Flask,jsonify,render_template
+from flask import Flask,jsonify,render_template,request,url_for,flash,redirect
 from flask_mysqldb import MySQL
 import MySQLdb
 
@@ -10,6 +10,7 @@ app.config['MYSQL_USER']="root"
 app.config['MYSQL_PASSWORD']=""
 app.config['MYSQL_DB']="dbflask"
 
+app.secret_key='mysecretkey'
 mysql= MySQL(app)
 
 #ruta para probar conexion a mysql
@@ -21,7 +22,6 @@ def DB_check():
           return jsonify( {'status':'ok','message':'Conectado con exito'} ),200     
      except MySQLdb.MySQLError as e:return jsonify( {'status':'error','message':str(e)} ),500
        
-
 #ruta de inicio
 @app.route('/')
 def home():
@@ -32,6 +32,47 @@ def home():
 @app.route('/consulta')
 def consulta():
      return render_template('consulta.html')
+
+#ruta de consulta
+@app.route('/guardarAlbum',methods=['Post'])
+def guardar():
+     
+     #listas o diccionarios
+     errores={}
+     
+     #obtener los datos al insertar (Variables de la vista)
+     Vtitulo= request.form.get('txtTitulo','').strip()
+     Vartista= request.form.get('txtArtista','').strip()
+     Vanio= request.form.get('txtAnio','').strip()
+     
+     if not Vtitulo:
+          errores['txtTitulo']= 'Nombre del album obligatorio'
+     if not Vartista:
+          errores['txtArtista']='Nombre de artista obligatorio'
+     if not Vanio:
+          errores['txtAnio']='Anio obligatorio'
+     elif not Vanio.isdigit() or int(Vanio)< 1800 or int(Vanio)> 2100:
+          errores['txtAnio']= 'ingresa un anio valido'
+          
+     if not errores: 
+          try:
+              cursor= mysql.connection.cursor()
+              cursor.execute('insert into tb_albums(album,artista,anio) values(%s,%s,%s)',(Vtitulo,Vartista,Vanio))
+              mysql.connection.commit()
+              flash('Album se ha guardado correctamente en bd')
+              return redirect(url_for('home'))
+
+          except Exception as e:
+           mysql.connection.rollback()
+           return ('algo fallo'+ str(e))
+           return redirect(url_for('home'))
+      
+          finally:
+               cursor.close()
+               
+     return render_template('formulario.html', errores=errores)
+     
+
 
 #ruta try-catch
 @app.errorhandler(404)
