@@ -45,5 +45,25 @@
         <button type="submit"> Guardar Album</button>
 
     </form>
+
+<table>
+    
+  <thead>
+ <tr>
+  <td>Id:</td>
+  <td>Album</td>
+ </tr>
+  </thead>
+
+ <tbody>
+{%for alb in albums%}
+<tr>
+<td> {{alb.0}}</td>
+<td><a href="/detalle/{{alb.0}}"> {{alb.1}} </a></td>
+</tr>
+{%endfor%}
+  </tbody>
+    </table>
+
 </body>
 </html>

@@ -25,8 +25,18 @@ def DB_check():
 #ruta de inicio
 @app.route('/')
 def home():
-     return render_template('formulario.html') 
-
+     try:
+          cursor= mysql.connection.cursor()
+          cursor.execute('SELECT* From tb_albums')
+          consultaTodo= cursor.fetchall()
+          return render_template('formulario.html', errores={},albums=consultaTodo)
+      
+     except Exception as e:
+          print('Error al consultar todo: '+e)
+          return render_template('formulario.html',errores={},albums=[])
+     
+     finally:
+          cursor.close()
 
 #ruta de consulta
 @app.route('/consulta')
@@ -71,6 +81,22 @@ def guardar():
                cursor.close()
                
      return render_template('formulario.html', errores=errores)
+
+#ruta detalle
+@app.route('/detalle/<int:id>')
+def detalle(id):
+     try:
+          cursor= mysql.connection.cursor()
+          cursor.execute('SELECT * FROM tb_albums WHERE id=%s' ,(id,))
+          consulta1= cursor.fetchone()
+          return render_template('consulta.html',album=consulta1)
+      
+     except Exception as e:
+          print('Error al consultar id: '+str(e))
+          return redirect(url_for('home'))
+     
+     finally:
+          cursor.close()
      
 
 
