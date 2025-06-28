@@ -99,6 +99,57 @@ def detalle(id):
           cursor.close()
      
 
+@app.route('/actualizar/<int:id>', methods=['GET'])
+def actualizar(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute('SELECT * FROM tb_albums WHERE id=%s', (id,))
+        album = cursor.fetchone()
+        return render_template('actualizar.html', album=album)
+
+    except Exception as e:
+        print('Error al consultar para actualizar: ' + str(e))
+        return redirect(url_for('home'))
+
+    finally:
+        cursor.close()
+
+
+@app.route('/guardarCambios/<int:id>', methods=['POST'])
+def guardarCambios(id):
+    Vtitulo = request.form.get('txtTitulo', '').strip()
+    Vartista = request.form.get('txtArtista', '').strip()
+    Vanio = request.form.get('txtAnio', '').strip()
+
+    errores = {}
+
+    if not Vtitulo:
+        errores['txtTitulo'] = 'El título es obligatorio.'
+    if not Vartista:
+        errores['txtArtista'] = 'El artista es obligatorio.'
+    if not Vanio or not Vanio.isdigit() or int(Vanio) < 1800 or int(Vanio) > 2100:
+        errores['txtAnio'] = 'Año inválido.'
+
+    if errores:
+        return render_template('actualizar.html', album=(id, Vtitulo, Vartista, Vanio), errores=errores)
+
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("""
+            UPDATE tb_albums
+            SET album=%s, artista=%s, anio=%s
+            WHERE id=%s
+        """, (Vtitulo, Vartista, Vanio, id))
+        mysql.connection.commit()
+        flash('Album actualizado correctamente')
+        return redirect(url_for('home'))
+
+    except Exception as e:
+        mysql.connection.rollback()
+        return f"Error al actualizar el album: {str(e)}"
+
+    finally:
+        cursor.close()
 
 #ruta try-catch
 @app.errorhandler(404)
