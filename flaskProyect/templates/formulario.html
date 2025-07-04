@@ -9,11 +9,9 @@
 <body>
     <h2> Vista de Formulario </h2>
     <a href="/consulta"> Abrir vista Consulta </a>
-
     <br>
     <br>
     <br>
-
     {% with mensajes= get_flashed_messages()%}
         {% if mensajes%}
          {% for msj in mensajes%}
@@ -64,6 +62,5 @@
 {%endfor%}
   </tbody>
     </table>
-
 </body>
 </html>

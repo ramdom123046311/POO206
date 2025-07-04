@@ -5,8 +5,7 @@
     <title>Actualizar Album</title>
 </head>
 <body>
-    <h2>formUpdate</h2>
-
+    <h2>Actualizar</h2>
     <form action="/guardarCambios/{{ album[0] }}" method="POST">
         <input type="text" name="txtTitulo" placeholder="Título" value="{{ album[1] }}">
         {% if errores and errores.txtTitulo %}

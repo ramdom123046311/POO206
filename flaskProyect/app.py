@@ -27,7 +27,7 @@ def DB_check():
 def home():
      try:
           cursor= mysql.connection.cursor()
-          cursor.execute('SELECT* From tb_albums')
+          cursor.execute("SELECT * FROM tb_albums WHERE state = 1")
           consultaTodo= cursor.fetchall()
           return render_template('formulario.html', errores={},albums=consultaTodo)
       
@@ -37,6 +37,33 @@ def home():
      
      finally:
           cursor.close()
+            
+#ruta confirmar eliminacion
+@app.route('/eliminar/<int:id>', methods=['POST'])
+def eliminar_album(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("UPDATE tb_albums SET state = 0 WHERE id = %s", (id,))
+        mysql.connection.commit()
+        return redirect('/')
+    except Exception as e:
+        mysql.connection.rollback()
+        return f"Error al eliminar el álbum: {str(e)}"
+    finally:
+        cursor.close()
+#ruta eliminar
+@app.route('/eliminar/<int:id>')
+def eliminar_confirmacion(id):
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute("SELECT * FROM tb_albums WHERE id = %s", (id,))
+        album = cursor.fetchone()
+        return render_template('confirmDel.html', album=album)
+    except Exception as e:
+        print("Error al cargar confirmación:", str(e))
+        return redirect(url_for('home'))
+    finally:
+        cursor.close()
 
 #ruta de consulta
 @app.route('/consulta')
@@ -113,7 +140,6 @@ def actualizar(id):
 
     finally:
         cursor.close()
-
 
 @app.route('/guardarCambios/<int:id>', methods=['POST'])
 def guardarCambios(id):
