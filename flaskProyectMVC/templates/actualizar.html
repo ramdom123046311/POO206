@@ -1,0 +1,40 @@
+{% extends 'plantilla2.html' %}
+
+{% block title %}Actualizar Álbum{% endblock %}
+{% block heading %}Actualizar Álbum{% endblock %}
+
+{% block content %}
+<form action="{{ url_for('albums.guardarCambios', id=album.id) }}" method="POST">
+    <div class="form-group">
+        <label for="txtTitulo">Título:</label>
+        <input type="text" class="form-control" id="txtTitulo" name="txtTitulo" 
+               placeholder="Título" value="{{ album.album }}">
+        {% if errores and errores.txtTitulo %}
+            <p class="error-message">{{ errores.txtTitulo }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="txtArtista">Artista:</label>
+        <input type="text" class="form-control" id="txtArtista" name="txtArtista" 
+               placeholder="Artista" value="{{ album.artista }}">
+        {% if errores and errores.txtArtista %}
+            <p class="error-message">{{ errores.txtArtista }}</p>
+        {% endif %}
+    </div>
+
+    <div class="form-group">
+        <label for="txtAnio">Año de publicación:</label>
+        <input type="number" class="form-control" id="txtAnio" name="txtAnio" 
+               placeholder="Año de publicación" value="{{ album.anio }}">
+        {% if errores and errores.txtAnio %}
+            <p class="error-message">{{ errores.txtAnio }}</p>
+        {% endif %}
+    </div>
+
+    <div class="actions">
+        <button type="submit" class="btn btn-primary">Guardar cambios</button>
+        <a href="{{ url_for('albums.home') }}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</form>
+{% endblock %}

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h2>Vista de consulta</h2>
+    
+    {% if album %}
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Álbum</th>
+                <th>Artista</th>
+                <th>Año</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ album.id }}</td>
+                <td>{{ album.album }}</td>
+                <td>{{ album.artista }}</td>
+                <td>{{ album.anio }}</td>
+                <td>
+                    <a href="{{ url_for('albums.actualizar', id=album.id) }}">Actualizar</a> | 
+                    <a href="{{ url_for('albums.eliminar_confirmacion', id=album.id) }}">Eliminar</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    {% else %}
+    <p>No se encontró el álbum solicitado.</p>
+    {% endif %}
+    
+    <br>
+    <a href="{{ url_for('albums.home') }}">Volver al inicio</a>
+</body>
+</html>

@@ -7,8 +7,8 @@ app= Flask(__name__)
 
 app.config['MYSQL_HOST']="localhost"
 app.config['MYSQL_USER']="root"
-app.config['MYSQL_PASSWORD']="2983"
-app.config['MYSQL_DB']="dbflask"
+app.config['MYSQL_PASSWORD']=""
+app.config['MYSQL_DB']="peliculas"
 
 app.secret_key='mysecretkey'
 mysql= MySQL(app)
@@ -29,11 +29,11 @@ def home():
           cursor= mysql.connection.cursor()
           cursor.execute("SELECT * FROM tb_albums WHERE state = 1")
           consultaTodo= cursor.fetchall()
-          return render_template('formulario.html', errores={},albums=consultaTodo)
+          return render_template('formulario.html', errores={},peliculas=consultaTodo)
       
      except Exception as e:
           print('Error al consultar todo: '+e)
-          return render_template('formulario.html',errores={},albums=[])
+          return render_template('formulario.html',errores={},peliculas=[])
      
      finally:
           cursor.close()
@@ -56,9 +56,9 @@ def eliminar_album(id):
 def eliminar_confirmacion(id):
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute("SELECT * FROM tb_albums WHERE id = %s", (id,))
-        album = cursor.fetchone()
-        return render_template('confirmDel.html', album=album)
+        cursor.execute("SELECT * FROM tb_peliculas WHERE id = %s", (id,))
+        pelicula = cursor.fetchone()
+        return render_template('confirmDel.html', pelicula=pelicula)
     except Exception as e:
         print("Error al cargar confirmación:", str(e))
         return redirect(url_for('home'))
@@ -71,7 +71,7 @@ def consulta():
      return render_template('consulta.html')
 
 #ruta de consulta
-@app.route('/guardarAlbum',methods=['Post'])
+@app.route('/guardarPelicula',methods=['Post'])
 def guardar():
      
      #listas o diccionarios
@@ -79,13 +79,16 @@ def guardar():
      
      #obtener los datos al insertar (Variables de la vista)
      Vtitulo= request.form.get('txtTitulo','').strip()
-     Vartista= request.form.get('txtArtista','').strip()
+     Vdirector= request.form.get('txtDirector','').strip()
      Vanio= request.form.get('txtAnio','').strip()
+     Vgenero= request.form.get('txtGenero','').strip()
      
      if not Vtitulo:
-          errores['txtTitulo']= 'Nombre del album obligatorio'
-     if not Vartista:
-          errores['txtArtista']='Nombre de artista obligatorio'
+          errores['txtTitulo']= 'Nombre del titulo obligatorio'
+     if not Vdirector:
+          errores['txtDirector']='Nombre de director obligatorio'
+     if not Vgenero:
+          errores['txtGenero']='Nombre de genero obligatorio'
      if not Vanio:
           errores['txtAnio']='Anio obligatorio'
      elif not Vanio.isdigit() or int(Vanio)< 1800 or int(Vanio)> 2100:
@@ -94,7 +97,7 @@ def guardar():
      if not errores: 
           try:
               cursor= mysql.connection.cursor()
-              cursor.execute('insert into tb_albums(album,artista,anio) values(%s,%s,%s)',(Vtitulo,Vartista,Vanio))
+              cursor.execute('insert into tb_albums(album,artista,anio) values(%s,%s,%s)',(Vtitulo,Vdirector,Vgenero,Vanio))
               mysql.connection.commit()
               flash('Album se ha guardado correctamente en bd')
               return redirect(url_for('home'))
@@ -130,7 +133,7 @@ def detalle(id):
 def actualizar(id):
     try:
         cursor = mysql.connection.cursor()
-        cursor.execute('SELECT * FROM tb_albums WHERE id=%s', (id,))
+        cursor.execute('SELECT * FROM tb_peliculas WHERE id=%s', (id,))
         album = cursor.fetchone()
         return render_template('actualizar.html', album=album)
 
